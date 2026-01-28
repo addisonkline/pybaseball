@@ -1,7 +1,10 @@
 import datetime
+from io import StringIO
 from time import sleep
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
+import pandas as pd
+from bs4 import BeautifulSoup, Comment
 from curl_cffi import requests
 
 from ..datahelpers import singleton
@@ -38,4 +41,24 @@ class BRefSession(singleton.Singleton):
             print(f"Error: {e}")
 
         return -1
+
+
+def read_bref_table(html: Union[str, bytes], table_id: str) -> pd.DataFrame:
+    if isinstance(html, bytes):
+        html = html.decode("utf-8", errors="replace")
+
+    soup = BeautifulSoup(html, "lxml")
+    table = soup.find("table", attrs={"id": table_id})
+    if table is None:
+        comments = soup.find_all(string=lambda text: isinstance(text, Comment))
+        for comment in comments:
+            comment_soup = BeautifulSoup(comment, "lxml")
+            table = comment_soup.find("table", attrs={"id": table_id})
+            if table is not None:
+                break
+
+    if table is None:
+        raise RuntimeError(f"Table with id '{table_id}' not found on scraped page.")
+
+    return pd.read_html(StringIO(str(table)))[0]
                 

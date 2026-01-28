@@ -40,6 +40,7 @@ dependencies = [
     "tqdm>=4.50.0",
     "attrs>=20.3.0",
     "curl_cffi>=0.10.0",
+    "rich>=14.3.1",
 ]
 dynamic = ["version"]
 
@@ -54,6 +55,9 @@ test = [
 
 [project.urls]
 Homepage = "https://github.com/jldbc/pybaseball"
+
+[project.scripts]
+pybaseball = "pybaseball.cli:main"
 
 [tool.setuptools]
 include-package-data = true
