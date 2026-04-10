@@ -28,7 +28,9 @@ def _iter_pybaseball_loggers() -> Iterable[logging.Logger]:
             yield logger
 
 
-def _root_has_handler(root: logging.Logger, handler_type: type, log_filepath: str | None = None) -> bool:
+def _root_has_handler(
+    root: logging.Logger, handler_type: type, log_filepath: str | None = None
+) -> bool:
     for handler in root.handlers:
         if isinstance(handler, handler_type):
             if log_filepath is None:
@@ -49,6 +51,7 @@ def _apply_file_formatter(root: logging.Logger, log_filepath: str) -> None:
 def initialize_logger(
     console_level: int | str = logging.INFO,
     log_filepath: str = ".pybaseball_logs/pybaseball.log",
+    plain: bool = False,
 ) -> None:
     """
     Initialize the logger for the pybaseball package.
